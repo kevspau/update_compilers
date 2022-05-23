@@ -1,5 +1,5 @@
 # update_compilers
-A small python script to update my [Golang](https://go.dev), [Odinlang](https://odin-lang.org), and [Nimlang](https://nim-lang.org) compilers
+A small python script to update my compilers, currently Odin, Go, Nim and D
 
 Instructions-
 
