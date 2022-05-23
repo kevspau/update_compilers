@@ -6,10 +6,10 @@ import os
 from shutil import rmtree
 import tarfile as t
 from sys import argv
-
+import json
 
 homeDir = "/home/sharpcdf/"
-maxComp = 3
+maxComp = 4
 currentComp = 0
 
 def updateOdin():
@@ -19,7 +19,7 @@ def updateOdin():
     if os.path.exists(homeDir + "Odin"):
         rmtree(homeDir + "Odin")
     print("Downloading Odin compiler...")
-    os.system("git clone https://github.com/odin-lang/Odin ~/Odin")
+    os.system("git clone https://github.com/odin-lang/Odin " + homeDir + "/Odin")
     print("Building Odin compiler...")
     os.system("cd " + homeDir + "Odin && make")
     print("Done!")
@@ -70,20 +70,44 @@ def updateGo():
     os.rename(homeDir + "go", homeDir + "Go")
     currentComp += 1
     print(f"Finished updating Go compiler, version {goVer} [{currentComp}/{maxComp}]\n")
+
+def updateD():
+    global maxComp, currentComp
+    print("Removing current D compiler...")
+    if os.path.exists(homeDir + "LDC2"):
+        rmtree(homeDir + "LDC2")
+    print("Updating script...")
+    dVer = bs(req.get("https://github.com/ldc-developers/ldc").content, 'html.parser').find_all('span', 'css-truncate css-truncate-target text-bold mr-2')[0].string.removeprefix("LDC ")
+    os.system("./install_dlang.sh update -p .")
+    os.remove("d-keyring.gpg")
+    os.remove("install_dlang.sh")
+    os.rename("install.sh", "install_dlang.sh")
+    print("Updating D compiler...")
+    os.system("./install_dlang.sh install ldc -p " + homeDir)
+    print("Cleaning up...")
+    os.remove(homeDir + "d-keyring.gpg")
+    os.remove(homeDir + "install.sh")
+    os.rename(homeDir + "ldc-" + dVer, homeDir + "LDC2")
+    currentComp += 1
+    print(f"Finished updating D compiler, version {dVer} [{currentComp}/{maxComp}]\n")
 if len(argv) > 1:
     #print(argv[1])
     if argv[1].lower() == "all":
         updateOdin()
         updateNim()
         updateGo()
+        updateD()
     elif argv[1].lower() == "odin":
         updateOdin()
     elif argv[1].lower() == "nim":
         updateNim()
     elif argv[1].lower() == "go":
         updateGo()
+    elif argv[1].lower() == "d":
+        updateD()
 else:
     updateOdin()
     updateNim()
     updateGo()
+    updateD()
 print("Done updating compilers!")
