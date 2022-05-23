@@ -6,7 +6,6 @@ import os
 from shutil import rmtree
 import tarfile as t
 from sys import argv
-import json
 
 homeDir = "/home/sharpcdf/"
 maxComp = 4
